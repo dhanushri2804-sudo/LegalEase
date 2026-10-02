@@ -61,9 +61,8 @@ GRANT CONNECT ON DATABASE legalease TO legalease_app;
 
 ```powershell
  python -m venv .venv
-.venv\Scripts\activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r .\requirements.txt
 if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
@@ -89,14 +88,14 @@ The migration grants the runtime role table/sequence access and narrowly grants 
 6. Start FastAPI in terminal 1:
 
 ```powershell
-uvicorn backend.main:app --reload --no-access-log
+.\.venv\Scripts\python.exe -m uvicorn backend.main:app --reload --no-access-log
 ```
 
-7. Start Streamlit in terminal 2. Set only its backend URL; do not load the backend `.env` into the frontend process:
+7. Start Streamlit in terminal 2. Stop any older Streamlit process first, then use the project virtual environment's Python explicitly so a globally installed Streamlit version is not used. Set only its backend URL; do not load the backend `.env` into the frontend process:
 
 ```powershell
 $env:BACKEND_URL = "http://localhost:8000"
-streamlit run frontend/app.py
+.\.venv\Scripts\python.exe -m streamlit run .\frontend\app.py
 ```
 
 Open http://localhost:8501, register, verify using the code delivered by SMTP, then sign in. API documentation is at http://localhost:8000/docs and health check at http://localhost:8000/health. In Swagger's **Authorize** dialog, paste the access token without a `Bearer ` prefix; Swagger adds the scheme. Do not paste credentials into shared terminals or issue trackers.
